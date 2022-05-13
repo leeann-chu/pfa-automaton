@@ -1,2 +1,2 @@
 cd ~/pfaa/pfaa_server
-./start.sh
+screen -dm -S Server ./start.sh
