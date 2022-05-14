@@ -56,10 +56,9 @@ class watchlog(commands.Cog):
                     message = "<:join:974544401319723008>" + message
                     self.playerlist.append(message.split(" ",2)[1])
                 
-                await self.bot.get_channel(972937495476052009).send(message)
+                await self.bot.get_channel(887913604387598446).send(message)
 
-    @commands.is_owner()
-    @commands.command()
+    @commands.is_owner()    @commands.command()
     async def watch(self, ctx, enabled):
         if enabled == "start":
             if not self.watchlog_task.is_running():

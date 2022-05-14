@@ -62,7 +62,7 @@ async def send_rcon(cmd, args, ctx):
             if resp:
                 if "/help" not in resp:
                     await ctx.send(f'`{resp}`')
-                    print (f'`{resp}`')
+                    print (f'{resp}')
             return True
 
     except: 
@@ -111,8 +111,8 @@ async def say_handler(ctx, error):
         if error.param.name == 'inp':
             await ctx.send("You forgot to give me a message to send!")
 
-@bot.command()
-async def list(ctx):
+@bot.command(aliases=["list"])
+async def _list(ctx):
     await send_rcon("list", None, ctx)
 
 @bot.command(aliases=["wc"])
@@ -126,8 +126,8 @@ async def start(ctx):
         await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="over Promenade of Progress"))
         await ctx.send("Starting server...")
         os.system('./lunch_server.sh')
-        time.sleep(200)
-        server_on = await check(ctx)
+        time.sleep(250)
+        await check(ctx)
     else: 
         await ctx.send(f"Server is already online! {random.choice(emoji_list)}")
 
@@ -138,7 +138,6 @@ async def stop(ctx):
         await bot.change_presence(status=discord.Status.dnd, activity=discord.Activity(type=discord.ActivityType.listening, name="Crickets"))
         await send_rcon("stop", None, ctx)
         time.sleep(10)
-        await bot.get_command("watch")("stop")
         await check(ctx)
     else: 
         await ctx.send(f"Server is already dead! {random.choice(emoji_list)}")
@@ -149,7 +148,9 @@ async def check(ctx, verbose=True):
     statusBool = await send_rcon("ping", None, ctx)
     status = ":white_check_mark: **Server is Online**" if statusBool else ":octagonal_sign: **Server is Offline**"
     if statusBool:
-        await bot.get_command("watch")("start")
+        await bot.get_command("watch")(ctx, "start")
+    else:
+        await bot.get_command("watch")(ctx, "stop")
     if verbose:
         await ctx.send(status)
     return statusBool
