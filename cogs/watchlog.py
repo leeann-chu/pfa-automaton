@@ -1,5 +1,4 @@
 from discord.ext import commands, tasks
-from discord import Embed
 from datetime import datetime, timedelta
 
 from os import path
