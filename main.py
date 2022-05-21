@@ -1,3 +1,5 @@
+# Original work Copyright (c) 2022 Ray Nieport
+
 import discord
 import traceback
 from discord.ext import commands
@@ -5,14 +7,9 @@ import os, time
 from rcon import rcon
 from os import getenv
 from dotenv import load_dotenv
-import random
 
 intents = discord.Intents.all() 
 intents.members = True 
-
-emoji_list = [":face_with_spiral_eyes:", ":japanese_goblin:", ":pleading_face:", 
-":confounded:", ":weary:", "<:splat:860541072102916136>", "<:jeb:518667017868410910>",
-"<:kirby:561033037521879069>", "<:doggo:399389492508622848>", "<:troll_moderate:839717983429460008>"]
 
 class MyBot(commands.Bot):
     def __init__(self):
@@ -38,17 +35,11 @@ if __name__ == "__main__":
     # Get environment variables
     load_dotenv()
     TOKEN = getenv('DISCORD_TOKEN')
-    USER_ROLE = getenv('DISCORD_USER_ROLE')
-    MOD_ROLE = getenv('DISCORD_MOD_ROLE')
-    ADMIN_ROLE = getenv('DISCORD_ADMIN_ROLE')
     IP = getenv('MINECRAFT_IP')
     PASS = getenv('MINECRAFT_PASS')
     PORT = getenv('RCON_PORT')
-    BOT_LEVEL = getenv('BOT_LEVEL')
     if PORT == None: PORT = 25575
     else: PORT = int(PORT)
-    if BOT_LEVEL == None: BOT_LEVEL = 1
-    else: BOT_LEVEL = int(BOT_LEVEL) 
 
 # Send command via rcon and print response
 async def send_rcon(cmd, args, ctx):
@@ -60,7 +51,7 @@ async def send_rcon(cmd, args, ctx):
                 resp = mcr.command(cmd)
             
             if resp:
-                if "/help" not in resp:
+                if "/help" not in resp: #ignore unknown command error
                     await ctx.send(f'`{resp}`')
                     print (f'{resp}')
             return True
@@ -104,6 +95,7 @@ async def help(ctx):
 @bot.command()
 async def say(ctx, *, inp: str):
     await send_rcon("say", inp, ctx)
+    await ctx.message.delete()
 
 @say.error
 async def say_handler(ctx, error):
@@ -112,8 +104,8 @@ async def say_handler(ctx, error):
             await ctx.send("You forgot to give me a message to send!")
 
 @bot.command(aliases=["list"])
-async def _list(ctx):
-    await send_rcon("list", None, ctx)
+async def playerlist(ctx):
+    await send_rcon("list", "uuid", ctx)
 
 @bot.command(aliases=["wc"])
 async def weather_clear(ctx):
@@ -126,21 +118,21 @@ async def start(ctx):
         await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="over Promenade of Progress"))
         await ctx.send("Starting server...")
         os.system('./lunch_server.sh')
-        time.sleep(250)
+        time.sleep(130)
         await check(ctx)
     else: 
-        await ctx.send(f"Server is already online! {random.choice(emoji_list)}")
+        await ctx.send(f"Server is already online!")
 
 @bot.command()
 async def stop(ctx):
     server_on = await check(ctx, False)
     if server_on:
-        await bot.change_presence(status=discord.Status.dnd, activity=discord.Activity(type=discord.ActivityType.listening, name="Crickets"))
+        await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="over Promenade of Progress"))
         await send_rcon("stop", None, ctx)
         time.sleep(10)
         await check(ctx)
     else: 
-        await ctx.send(f"Server is already dead! {random.choice(emoji_list)}")
+        await ctx.send(f"Server is already dead!")
 ##
 
 @bot.command(aliases=["c", "status"])

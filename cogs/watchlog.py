@@ -8,7 +8,6 @@ class watchlog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.last_checked = datetime.now()
-        self.playerlist = []
         
     def cog_unload(self):
         self.watchlog_task.cancel()
@@ -16,7 +15,7 @@ class watchlog(commands.Cog):
     # Events
     @commands.Cog.listener()
     async def on_ready(self):
-        print("watchlog has Started")
+        print("watchlog is on standby")
 
     # Loop
     @tasks.loop(seconds=3)
@@ -40,8 +39,8 @@ class watchlog(commands.Cog):
                 except Exception:
                     try: message = message.split("]:",1)[1]
                     except Exception: pass
-
-                substrings = ["Rcon:", "Rcon connection", "weather"]
+                #Ignore messages with these words
+                substrings = ["Rcon:", "Rcon connection", "weather", "UUID"]
 
                 for sub in substrings:
                     if sub in message:
@@ -49,11 +48,9 @@ class watchlog(commands.Cog):
 
                 if "left the game" in message:
                     message = "<:leave:974544401298763786>" + message
-                    self.playerlist.remove(message.split(" ",2)[1])
 
                 if "joined the game" in message:
                     message = "<:join:974544401319723008>" + message
-                    self.playerlist.append(message.split(" ",2)[1])
                 
                 await self.bot.get_channel(972937495476052009).send(message)
 
@@ -65,22 +62,10 @@ class watchlog(commands.Cog):
                 print("Beginning watch")
                 self.watchlog_task.start()
         elif enabled == "stop":
-            print("Ending watch")
-            self.watchlog_task.cancel()
-            await ctx.send("No longer watching log")
+            if self.watchlog_task.is_running():
+                print("Ending watch")
+                self.watchlog_task.cancel()
+                await ctx.send("No longer watching log")
 
-    @commands.is_owner()
-    @commands.command()
-    async def add_player(self, ctx, name=None):
-        if name != None:
-            self.playerlist.append(name)
-        await ctx.send("\n".join(self.playerlist))
-
-    @commands.command()
-    async def list_players(self, ctx):
-        await ctx.send(f"`Players currently online: [ {len(self.playerlist)} ]`")
-        if self.playerlist:
-            await ctx.send("\n".join(self.playerlist))
-
-async def setup(bot): #Note to future me, must make this async and add_cog await
+async def setup(bot): #Note to future me, this must be async and add_cog await
     await bot.add_cog(watchlog(bot))
