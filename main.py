@@ -104,8 +104,8 @@ async def say_handler(ctx, error):
             await ctx.send("You forgot to give me a message to send!")
 
 @bot.command(aliases=["list"])
-async def playerlist(ctx):
-    await send_rcon("list", "uuid", ctx)
+async def _list(ctx):
+    await send_rcon("list", None, ctx)
 
 @bot.command(aliases=["wc"])
 async def weather_clear(ctx):
