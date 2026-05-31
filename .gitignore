@@ -1,3 +1,4 @@
 .env
 bot_ssh_key
 bot_ssh_key.pub
+__pycache__/
