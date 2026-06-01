@@ -3,7 +3,7 @@
 # Starts or stops the Minecraft server via restricted SSH to the host
 
 SSH_KEY="/home/watchrat/.ssh/bot_ssh_key"
-SSH_USER="watchrat"
+SSH_USER="leeann"
 SSH_HOST="host.docker.internal"
 SSH_PORT="40286"
 CONTAINER="mceternal2026"

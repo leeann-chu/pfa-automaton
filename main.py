@@ -123,7 +123,7 @@ async def start(ctx):
                 type=discord.ActivityType.watching, name=""))
         await ctx.send("Starting server...")
         subprocess.run(['./lunch_server.sh', 'start'], check=True)
-        await asyncio.sleep(130)  # non-blocking sleep so bot stays responsive
+        await asyncio.sleep(60)  # non-blocking sleep so bot stays responsive
         await check(ctx)
     else:
         await ctx.send("Server is already online!")
@@ -137,7 +137,7 @@ async def stop(ctx):
             activity=discord.Activity(
                 type=discord.ActivityType.watching, name="the rats and their cannons"))
         await send_rcon("stop", None, ctx)
-        await asyncio.sleep(10)  # non-blocking sleep so bot stays responsive
+        await asyncio.sleep(120)  # non-blocking sleep so bot stays responsive
         await check(ctx)
     else:
         await ctx.send("Server is already dead!")
