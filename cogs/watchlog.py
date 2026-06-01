@@ -68,6 +68,8 @@ class watchlog(commands.Cog):
         for line in new_lines:
             if "[net.minecraft.server.MinecraftServer/]" not in line:
                 continue
+            if "Saving chunks for level" in line:
+                continue
 
             try: message = line.split("INFO]:", 1)[1]
             except Exception:
