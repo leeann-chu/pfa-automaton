@@ -163,8 +163,7 @@ docker compose up -d --build watchrat
 pfa-automaton/
 ├── Dockerfile
 ├── requirements.txt
-├── .env                  ← create from .env.template, never commit
-├── .env.template         ← safe to commit, no real values
+├── .env                 
 ├── .gitignore
 ├── bot_ssh_key           ← never commit
 ├── bot_ssh_key.pub       ← never commit
