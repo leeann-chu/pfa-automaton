@@ -3,6 +3,14 @@
 from discord.ext import commands, tasks
 from os import path, getenv
 
+BLOCKED_PHRASES = [
+    "ThreadedAnvilChunkStorage",
+    "minecraft:entity.experience_orb.pickup",
+    "Generating keypair",
+    "[net.minecraft.server.MinecraftServer/]",
+    "Saving chunks for level"
+]
+
 class watchlog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -66,9 +74,7 @@ class watchlog(commands.Cog):
 
         # Only process messages from the Minecraft server itself
         for line in new_lines:
-            if "[net.minecraft.server.MinecraftServer/]" not in line:
-                continue
-            if "Saving chunks for level" in line:
+            if any(phrase.lower() in message.lower() for phrase in BLOCKED_PHRASES):
                 continue
 
             try: message = line.split("INFO]:", 1)[1]
@@ -109,7 +115,7 @@ class watchlog(commands.Cog):
             if self.watchlog_task.is_running():
                 print("Ending watch")
                 self.watchlog_task.cancel()
-                await ctx.send("No longer watching log")
+                await ctx.send("Watchrat is no longer watching log")
 
 async def setup(bot):
     await bot.add_cog(watchlog(bot))

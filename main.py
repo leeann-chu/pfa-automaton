@@ -133,7 +133,7 @@ async def stop(ctx):
     server_on = await check(ctx, False)
     if server_on:
         await bot.change_presence(
-            status=discord.Status.offline,
+            status=discord.Status.away,
             activity=discord.Activity(
                 type=discord.ActivityType.watching, name="crickets"))
         await send_rcon("stop", None, ctx)
